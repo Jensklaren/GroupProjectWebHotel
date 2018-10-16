@@ -22,5 +22,11 @@ namespace GroupProjectWebHotel.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
+
+        public DbSet<GroupProjectWebHotel.Models.Booking> Booking { get; set; }
+
+        public DbSet<GroupProjectWebHotel.Models.Room> Room { get; set; }
+
+        public DbSet<GroupProjectWebHotel.Models.Customer> Customer { get; set; }
     }
 }
