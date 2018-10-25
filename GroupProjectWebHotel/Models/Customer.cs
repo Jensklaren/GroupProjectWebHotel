@@ -25,6 +25,9 @@ namespace GroupProjectWebHotel.Models
         [Display(Name = "Given Name")]
         public string GivenName { get; set; }
 
+        [NotMapped]
+        public string FullName => $"{GivenName} {Surname}";
+
         [Required]
         [RegularExpression(@"[0-9]{4}$")]
         [Display(Name = "Postcode")]

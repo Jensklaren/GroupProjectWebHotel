@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GroupProjectWebHotel.Data;
 using GroupProjectWebHotel.Models;
+using Microsoft.Data.Sqlite;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GroupProjectWebHotel.Controllers
 {
@@ -148,6 +150,37 @@ namespace GroupProjectWebHotel.Controllers
         private bool RoomExists(int id)
         {
             return _context.Room.Any(e => e.ID == id);
+        }
+
+        [AllowAnonymous]
+        public IActionResult SearchRooms()
+        {
+            return View();
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        [AllowAnonymous]
+        public async Task<IActionResult> SearchRooms(SearchRoomsViewModel searchRooms)
+        {
+          
+                var Bedcount = new SqliteParameter("BedCount", searchRooms.BedCount);
+                var CheckIn = new SqliteParameter("CheckIn", searchRooms.CheckIn);
+                var CheckOut = new SqliteParameter("CheckOut", searchRooms.CheckOut);
+
+                var CheckRooms = _context.Room.FromSql("select * from [Room] "
+                   + " where [Room].BedCount = @BedCount ", Bedcount)
+                  // + "SELECT * FROM [Booking] WHERE[Booking].CheckIn = @CheckIn not in", Bedcount, CheckIn)
+                  //  + "WHERE[Booking].CheckIn = @CheckIn Not In AND Where [Booking].CheckOut = @CheckOut)", Bedcount, CheckIn, CheckOut)
+                  .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
+
+          /*  var diffMovies = _context.Movie.FromSql("select * from [Movie] inner join [Order] on [Movie].ID = [Order].MovieID "
+                               + "where [Order].MovieGoerEmail = @personA and [Movie].ID not in "
+                               + "(select [Movie].ID from [Movie] inner join [Order] on [Movie].ID = [Order].MovieID "
+                               + "where[Order].MovieGoerEmail = @personB)", emailA, emailB)
+                               */
+
+                ViewBag.Rooms = await CheckRooms.ToListAsync();
+     
+            return View(searchRooms);
         }
     }
 }

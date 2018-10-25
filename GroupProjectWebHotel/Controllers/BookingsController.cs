@@ -7,9 +7,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GroupProjectWebHotel.Data;
 using GroupProjectWebHotel.Models;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace GroupProjectWebHotel.Controllers
 {
+    //[Authorize(Roles = "Admin")]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,10 +23,36 @@ namespace GroupProjectWebHotel.Controllers
         }
 
         // GET: Bookings
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            var applicationDbContext = _context.Booking.Include(b => b.TheCustomer).Include(b => b.TheRoom);
-            return View(await applicationDbContext.ToListAsync());
+            string _email = User.FindFirst(ClaimTypes.Name).Value;
+            var book = (IQueryable<Booking>)_context.Booking.Include(b => b.TheCustomer).Where(w => w.CustomerEmail == _email).Include(b => b.TheRoom);
+
+            if (String.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "CheckIn_asc";
+            }
+
+            switch (sortOrder)
+            {
+                case "CheckIn_asc":
+                    book = book.OrderBy(p => p.CheckIn);
+                    break;
+                case "pizzaName_desc":
+                    book = book.OrderByDescending(p => p.CheckIn);
+                    break;
+                case "pizzaCount_asc":
+                    book = book.OrderBy(p => p.Cost);
+                    break;
+                case "pizzaCount_desc":
+                    book = book.OrderByDescending(p => p.Cost);
+                    break;
+            }
+
+            ViewData["NextCheckInOrder"] = sortOrder != "CheckIn_asc" ? "CheckIn_asc" : "CheckIn_desc";
+            ViewData["NextCostOrder"] = sortOrder != "Cost_asc" ? "Cost_asc" : "Cost_desc";
+            return View(await book.AsNoTracking().ToListAsync());
         }
 
         // GET: Bookings/Details/5
@@ -50,7 +79,7 @@ namespace GroupProjectWebHotel.Controllers
         public IActionResult Create()
         {
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email");
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level");
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID");
             return View();
         }
 
@@ -161,6 +190,22 @@ namespace GroupProjectWebHotel.Controllers
         private bool BookingExists(int id)
         {
             return _context.Booking.Any(e => e.ID == id);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CalcPurchaseStats(CalculateStats calculateStats)
+        {
+            var customerCountGroups = _context.Customer.GroupBy(m => m.Postcode);
+            var customerStatsPostcode = customerCountGroups.Select(g => new CalculateStats { CustomersPostcode = g.Key, PostcodeCount = g.Count() });
+
+            var customerCountGroups2 = _context.Booking.GroupBy(m => m.RoomID);
+            var customerStatsRooms = customerCountGroups2.Select(g => new CalculateStats { CustomersRoom = g.Key, RoomIDCount = g.Count() });
+
+            ViewBag.CustomerPostcodeStats = await customerStatsPostcode.ToListAsync();
+            ViewBag.CustomerRoomStats = await customerStatsRooms.ToListAsync();
+
+            return View(await customerStatsPostcode.ToListAsync());
+        
         }
     }
 }

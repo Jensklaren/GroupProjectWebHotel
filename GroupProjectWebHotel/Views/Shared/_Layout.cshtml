@@ -34,14 +34,14 @@
                     @if (User.IsInRole("Customer"))
                     {
                         <li><a asp-area="" asp-controller="Customers" asp-action="MyDetails">My Details</a></li>
-                        <li><a asp-area="" asp-controller="Rooms" asp-action="Create">Search Rooms</a></li>
+                        <li><a asp-area="" asp-controller="Rooms" asp-action="SearchRooms">Search Rooms</a></li>
                         <li><a asp-area="" asp-controller="Bookings" asp-action="Create">Book A Room</a></li>
-                        <li><a asp-area="" asp-controller="Bookings" asp-action="Edit">My Bookings</a></li>
+                        <li><a asp-area="" asp-controller="Bookings" asp-action="Index">My Bookings</a></li>
                     }
                     @if (User.IsInRole("Admin"))
                     {
                         <li><a asp-area="" asp-controller="Home" asp-action="Index">Manage Bookings</a></li>
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Statistics</a></li>
+                        <li><a asp-area="" asp-controller="Bookings" asp-action="CalcPurchaseStats">Statistics</a></li>
                     }
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")

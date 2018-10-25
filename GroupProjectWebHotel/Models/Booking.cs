@@ -11,6 +11,7 @@ namespace GroupProjectWebHotel.Models
     {
         public int ID { get; set; }
         public int RoomID { get; set; }
+
         public string CustomerEmail { get; set; }
 
         [DataType(DataType.Date)]

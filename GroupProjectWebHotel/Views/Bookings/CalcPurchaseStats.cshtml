@@ -1,0 +1,55 @@
+﻿@model IEnumerable<GroupProjectWebHotel.Models.CalculateStats>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<h2>Customer distribution with respect to postcodes.</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(m => m.CustomersPostcode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.PostcodeCount)
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.CustomerPostcodeStats)
+    {
+        <tr>
+            <td>
+                @item.CustomersPostcode
+            </td>
+            <td>
+                @item.PostcodeCount
+            </td>
+        </tr>
+    }
+</table>
+
+<h2>Booking distribution with respect to rooms.</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(m => m.CustomersRoom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(m => m.RoomIDCount)
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.CustomerRoomStats)
+    {
+    <tr>
+        <td>
+            @item.CustomersRoom
+        </td>
+        <td>
+            @item.RoomIDCount
+        </td>
+    </tr>
+    }
+</table>
+
