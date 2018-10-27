@@ -10,6 +10,7 @@ namespace GroupProjectWebHotel.Models
     public class Booking
     {
         public int ID { get; set; }
+
         public int RoomID { get; set; }
 
         public string CustomerEmail { get; set; }

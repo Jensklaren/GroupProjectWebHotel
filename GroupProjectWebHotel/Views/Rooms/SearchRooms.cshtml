@@ -29,57 +29,58 @@
             <div class="form-group">
                 <input type="submit" value="Search Rooms" class="btn btn-default" />
             </div>
-         </form>
+        </form>
     </div>
 </div>
-        @if (Model != null)
+@if (Model != null)
+{
+    <div>
+        <hr />
+        @if (ViewBag.Rooms.Count == 0)
         {
-            <div>
-                <hr />
-                @if (ViewBag.Rooms.Count == 0)
-                {
-                    <h4>There are no rooms with <b>@Model.BedCount</b> beds</h4>
-                }
-                else
-                {
-                    <table class="table">
-                        <tr>
-                            <th>
-                                Room ID
-                            </th>
-                            <th>
-                                Level
-                            </th>
-                            <th>
-                                BedCount
-                            </th>
-                            <th>
-                                Price
-                            </th>
-                        </tr>
-
-                        @foreach (var item in ViewBag.Rooms)
-                        {
-                            <tr>
-                                <td>
-                                    @item.ID
-                                </td>
-                                <td>
-                                    @item.Level
-                                </td>
-                                <td>
-                                    @item.BedCount
-                                </td>
-                                <td>
-                                    @item.Price
-                                </td>
-                            </tr>
-                        }
-                    </table>
-                }
-            </div>
+            <h4>There are no rooms with <b>@Model.BedCount</b> beds</h4>
         }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>
+                        Room ID
+                    </th>
+                    <th>
+                        Level
+                    </th>
+                    <th>
+                        BedCount
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                </tr>
 
-        @section Scripts {
-            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+                @foreach (var item in ViewBag.Rooms)
+                {
+                    <tr>
+                        <td>
+                            @item.ID
+                        </td>
+                        <td>
+                            @item.Level
+                        </td>
+                        <td>
+                            @item.BedCount
+                        </td>
+                        <td>
+                            @item.Price
+                        </td>
+                    </tr>
+                }
+            </table>
         }
+    </div>
+    <h4>Please take down the information so you can make your booking!</h4>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

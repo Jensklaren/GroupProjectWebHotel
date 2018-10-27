@@ -12,10 +12,10 @@ namespace GroupProjectWebHotel.Models
 
         [Required]
         [DataType(DataType.Date)]
-        public string CheckIn { get; set; }
+        public DateTime CheckIn { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        public string CheckOut { get; set; }
+        public DateTime CheckOut { get; set; }
     }
 }

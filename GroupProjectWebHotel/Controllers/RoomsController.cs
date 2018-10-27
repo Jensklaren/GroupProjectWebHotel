@@ -166,19 +166,20 @@ namespace GroupProjectWebHotel.Controllers
                 var CheckIn = new SqliteParameter("CheckIn", searchRooms.CheckIn);
                 var CheckOut = new SqliteParameter("CheckOut", searchRooms.CheckOut);
 
-                var CheckRooms = _context.Room.FromSql("select * from [Room] "
-                   + " where [Room].BedCount = @BedCount ", Bedcount)
-                  // + "SELECT * FROM [Booking] WHERE[Booking].CheckIn = @CheckIn not in", Bedcount, CheckIn)
-                  //  + "WHERE[Booking].CheckIn = @CheckIn Not In AND Where [Booking].CheckOut = @CheckOut)", Bedcount, CheckIn, CheckOut)
+                var CheckRooms = _context.Room.FromSql("select * from [Room] inner join [Booking] on [Room].ID = [Booking].RoomID where [Room].BedCount = @BedCount and [Room].ID not in "
+                    + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn)", Bedcount, CheckIn)
                   .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
 
-          /*  var diffMovies = _context.Movie.FromSql("select * from [Movie] inner join [Order] on [Movie].ID = [Order].MovieID "
-                               + "where [Order].MovieGoerEmail = @personA and [Movie].ID not in "
-                               + "(select [Movie].ID from [Movie] inner join [Order] on [Movie].ID = [Order].MovieID "
-                               + "where[Order].MovieGoerEmail = @personB)", emailA, emailB)
-                               */
+            /*
+             "select * from [Room] where [Room].BedCount = @BedCount ", Bedcount)
+             "select * FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn", CheckIn)
+             "select * FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckOut = @CheckOut", CheckOut)
 
-                ViewBag.Rooms = await CheckRooms.ToListAsync();
+             ("select * from [Room] inner join [Booking] on [Room].ID = [Booking].RoomID where [Room].BedCount = @BedCount and [Room].ID not in "
+              + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn)", Bedcount, CheckIn)
+             */
+
+            ViewBag.Rooms = await CheckRooms.ToListAsync();
      
             return View(searchRooms);
         }
