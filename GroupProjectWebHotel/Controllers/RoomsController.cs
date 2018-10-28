@@ -166,18 +166,9 @@ namespace GroupProjectWebHotel.Controllers
                 var CheckIn = new SqliteParameter("CheckIn", searchRooms.CheckIn);
                 var CheckOut = new SqliteParameter("CheckOut", searchRooms.CheckOut);
 
-                var CheckRooms = _context.Room.FromSql("select * from [Room] inner join [Booking] on [Room].ID = [Booking].RoomID where [Room].BedCount = @BedCount and [Room].ID not in "
-                    + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn)", Bedcount, CheckIn)
-                  .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
-
-            /*
-             "select * from [Room] where [Room].BedCount = @BedCount ", Bedcount)
-             "select * FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn", CheckIn)
-             "select * FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckOut = @CheckOut", CheckOut)
-
-             ("select * from [Room] inner join [Booking] on [Room].ID = [Booking].RoomID where [Room].BedCount = @BedCount and [Room].ID not in "
-              + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn)", Bedcount, CheckIn)
-             */
+                var CheckRooms = _context.Room.FromSql("select * from [Room] where [Room].BedCount == @BedCount and [Room].ID not in "
+                    + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID == [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn or [Booking].CheckOut = @CheckOut)", Bedcount, CheckIn, CheckOut)
+                    .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
 
             ViewBag.Rooms = await CheckRooms.ToListAsync();
      
