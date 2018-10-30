@@ -98,7 +98,7 @@ namespace GroupProjectWebHotel.Controllers
             ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
-
+        //
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageIndex()
         {
