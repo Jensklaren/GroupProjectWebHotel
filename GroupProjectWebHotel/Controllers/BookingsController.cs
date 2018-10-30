@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GroupProjectWebHotel.Data;
 using GroupProjectWebHotel.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GroupProjectWebHotel.Controllers
 {
@@ -50,7 +51,7 @@ namespace GroupProjectWebHotel.Controllers
         public IActionResult Create()
         {
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email");
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level");
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID");
             return View();
         }
 
@@ -68,9 +69,28 @@ namespace GroupProjectWebHotel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult ManageCreate()
+        {
+            ViewData["CustomerEmail"] = new SelectList(_context.Customer, "Email", "Email");
+            ViewData["RoomID"] = new SelectList(_context.Room, "ID", "ID");
+            ViewData["RoomCost"] = new SelectList(_context.Room, "Cost", "Cost");
+            
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageIndex()
+        {
+            var applicationDbContext = _context.Booking.Include(b => b.TheCustomer).Include(b => b.TheRoom);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        [Authorize(Roles = "Admin")]
 
         // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -86,7 +106,7 @@ namespace GroupProjectWebHotel.Controllers
                 return NotFound();
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
 
@@ -123,7 +143,7 @@ namespace GroupProjectWebHotel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
 

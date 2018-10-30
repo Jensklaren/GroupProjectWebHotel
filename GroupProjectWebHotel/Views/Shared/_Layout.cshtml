@@ -40,7 +40,7 @@
                     }
                     @if (User.IsInRole("Admin"))
                     {
-                        <li><a asp-area="" asp-controller="Home" asp-action="Index">Manage Bookings</a></li>
+                        <li><a asp-area="" asp-controller="Bookings" asp-action="ManageIndex">Manage Bookings</a></li>
                         <li><a asp-area="" asp-controller="Home" asp-action="Index">Statistics</a></li>
                     }
                 </ul>
