@@ -9,6 +9,7 @@ using GroupProjectWebHotel.Data;
 using GroupProjectWebHotel.Models;
 using Microsoft.AspNetCore.Authorization;
 
+//please be added change
 namespace GroupProjectWebHotel.Controllers
 {
     public class BookingsController : Controller
@@ -72,7 +73,7 @@ namespace GroupProjectWebHotel.Controllers
             ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
-
+        
         [Authorize(Roles = "Admin")]
         public IActionResult ManageCreate()
         {
