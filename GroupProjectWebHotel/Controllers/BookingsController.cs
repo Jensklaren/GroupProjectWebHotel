@@ -84,6 +84,21 @@ namespace GroupProjectWebHotel.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageCreate([Bind("ID,RoomID,CustomerEmail,CheckIn,CheckOut")] Booking booking)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(booking);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ManageIndex));
+            }
+            ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
+            return View(booking);
+        }
+
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ManageIndex()
         {
