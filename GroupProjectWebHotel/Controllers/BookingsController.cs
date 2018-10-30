@@ -156,7 +156,7 @@ namespace GroupProjectWebHotel.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManageIndex));
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
             ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
@@ -191,7 +191,7 @@ namespace GroupProjectWebHotel.Controllers
             var booking = await _context.Booking.SingleOrDefaultAsync(m => m.ID == id);
             _context.Booking.Remove(booking);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(ManageIndex));
         }
 
         private bool BookingExists(int id)
