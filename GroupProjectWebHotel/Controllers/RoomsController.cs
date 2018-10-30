@@ -161,17 +161,24 @@ namespace GroupProjectWebHotel.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> SearchRooms(SearchRoomsViewModel searchRooms)
         {
-          
-                var Bedcount = new SqliteParameter("BedCount", searchRooms.BedCount);
-                var CheckIn = new SqliteParameter("CheckIn", searchRooms.CheckIn);
-                var CheckOut = new SqliteParameter("CheckOut", searchRooms.CheckOut);
 
-                var CheckRooms = _context.Room.FromSql("select * from [Room] where [Room].BedCount == @BedCount and [Room].ID not in "
-                    + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID == [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn or [Booking].CheckOut = @CheckOut)", Bedcount, CheckIn, CheckOut)
-                    .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
+            var Bedcount = new SqliteParameter("BedCount", searchRooms.BedCount);
+            var CheckIn = new SqliteParameter("CheckIn", searchRooms.CheckIn);
+            var CheckOut = new SqliteParameter("CheckOut", searchRooms.CheckOut);
+
+            var CheckRooms = _context.Room.FromSql("select * from [Room] where [Room].BedCount = @BedCount and [Room].ID not in "
+                + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID = [Booking].RoomID WHERE [Booking].CheckIn <= @CheckOut or [Booking].CheckOut <= @CheckIn)", Bedcount, CheckIn, CheckOut)
+                .Select(ro => new Room { ID = ro.ID, Level = ro.Level, BedCount = ro.BedCount, Price = ro.Price });
 
             ViewBag.Rooms = await CheckRooms.ToListAsync();
-     
+
+            /*
+             "select * from [Room] where [Room].BedCount == @BedCount and [Room].ID not in "
+                + "(select [Room].ID FROM [Room] inner join [Booking] on [Room].ID == [Booking].RoomID WHERE [Booking].CheckIn = @CheckIn or [Booking].CheckOut = @CheckOut)", Bedcount, CheckIn, CheckOut)
+               
+                    bookingA.Checkin < bookingB.Checkout AND bookingB.Checkin < bookingA.Checkout
+             */
+
             return View(searchRooms);
         }
     }
