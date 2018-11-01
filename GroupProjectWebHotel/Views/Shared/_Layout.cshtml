@@ -36,7 +36,7 @@
                     {
                         <li><a asp-area="" asp-controller="Customers" asp-action="MyDetails">My Details</a></li>
                         <li><a asp-area="" asp-controller="Rooms" asp-action="SearchRooms">Search Rooms</a></li>
-                        <li><a asp-area="" asp-controller="Rooms" asp-action="BookRoom">Book A Room</a></li>
+                        <li><a asp-area="" asp-controller="Bookings" asp-action="Create">Book A Room</a></li>
                         <li><a asp-area="" asp-controller="Bookings" asp-action="Index">My Bookings</a></li>
                     }
                     @if (User.IsInRole("Admin"))
