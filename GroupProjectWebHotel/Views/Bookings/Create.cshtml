@@ -36,53 +36,11 @@
 @if (Model != null)
 {
     <div>
-        <h4>Booked Room Successfully!</h4>
-        <h5>RoomID: @Model.RoomID, Check In: @Model.CheckIn, Check Out: @Model.CheckOut, Cost: @ViewBag.TotalCost</h5>
+        <h3><strong>Booked Room Successfully!</strong></h3>
+        <h4><b>RoomID:</b> @Model.RoomID <b>Check In:</b> @Model.CheckIn.ToShortDateString() <b>Check Out:</b> @Model.CheckOut.ToShortDateString() <b>Cost:</b> @ViewBag.TotalCost</h4>
     </div>
 
 }
-
-
-@*@if (Model != null)
-    {
-    <div>
-        <table class="table">
-            <th>
-                RoomID
-            </th>
-            <th>
-                Level
-            </th>
-            <th>
-                Check-In date
-            </th>
-            <th>
-                Check-In date
-            </th>
-            <th>
-                Cost
-            </th>
-            @foreach (var item in ViewBag.RowsAffected)
-            {
-                <tr>
-                    @item.RoomID
-                </tr>
-                @*<tr>
-                    @item.theRoom.Level
-                </tr>
-                <tr>
-                    @item.CheckIn
-                </tr>
-                <tr>
-                    @item.CheckOut
-                </tr>
-                <tr>
-                    @item.Cost
-                </tr>
-            }
-        </table>
-    </div>
-    }*@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

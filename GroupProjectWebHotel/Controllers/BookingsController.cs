@@ -75,6 +75,7 @@ namespace GroupProjectWebHotel.Controllers
                 return View(booking);
             }
         // GET: Bookings/Create
+        [Authorize(Roles = "Customer")]
         public IActionResult Create()
         {
             ViewData["CustomerEmail"] = new SelectList(_context.Customer, "Email", "Email");
@@ -85,6 +86,7 @@ namespace GroupProjectWebHotel.Controllers
         // POST: Bookings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Customer")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookRoom bookRoom)
@@ -211,6 +213,7 @@ namespace GroupProjectWebHotel.Controllers
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
             ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
+
             return View(booking);
         }
 

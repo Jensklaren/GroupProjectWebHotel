@@ -16,12 +16,12 @@ namespace GroupProjectWebHotel.Models
         public string Email { get; set; }
 
         [Required]
-        [RegularExpression(@"[A-Za-z - ']{2,20}$")]
+        [RegularExpression(@"[A-Za-z-']{2,20}$")]
         [Display(Name = "Customer Surname")]
         public string Surname { get; set; }
 
         [Required]
-        [RegularExpression(@"[A-Za-z - ']{2,20}$")]
+        [RegularExpression(@"[A-Za-z-']{2,20}$")]
         [Display(Name = "Customer Given Name")]
         public string GivenName { get; set; }
 

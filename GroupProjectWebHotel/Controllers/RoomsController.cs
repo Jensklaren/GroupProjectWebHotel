@@ -151,12 +151,14 @@ namespace GroupProjectWebHotel.Controllers
         {
             return _context.Room.Any(e => e.ID == id);
         }
-
+        [Authorize(Roles = "Customer")]
         [AllowAnonymous]
         public IActionResult SearchRooms()
         {
             return View();
         }
+
+        [Authorize(Roles = "Customer")]
         [HttpPost, ValidateAntiForgeryToken]
         [AllowAnonymous]
         public async Task<IActionResult> SearchRooms(SearchRoomsViewModel searchRooms)

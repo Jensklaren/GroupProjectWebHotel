@@ -10,6 +10,7 @@ namespace GroupProjectWebHotel.Models
     public class Booking
     {
         public int ID { get; set; }
+
         [Display(Name = "Room ID")]
         public int RoomID { get; set; }
 
@@ -20,6 +21,7 @@ namespace GroupProjectWebHotel.Models
 
         [DataType(DataType.Date), Display(Name = "Checking out Date")]
         public DateTime CheckOut { get; set; }
+
         [DataType(DataType.Currency)]
         public decimal Cost { get; set; }
 
