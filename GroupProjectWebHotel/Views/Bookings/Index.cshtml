@@ -13,6 +13,15 @@
     <thead>
         <tr>
             <th>
+                @Html.DisplayNameFor(model => model.TheCustomer.Surname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TheCustomer.GivenName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoomID)
+            </th>
+            <th>
                 <a asp-action="Index" asp-route-sortorder="@ViewData["NextCheckInOrder"]">
                     @Html.DisplayNameFor(model => model.CheckIn)
                 </a>
@@ -25,18 +34,20 @@
                     @Html.DisplayNameFor(model => model.Cost)
                 </a>
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TheCustomer)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TheRoom.ID)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TheCustomer.Surname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TheCustomer.GivenName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RoomID)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CheckIn)
             </td>
@@ -45,12 +56,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TheCustomer.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TheRoom.ID)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |

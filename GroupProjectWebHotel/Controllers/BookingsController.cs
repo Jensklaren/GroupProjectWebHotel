@@ -12,7 +12,6 @@ using System.Security.Claims;
 
 namespace GroupProjectWebHotel.Controllers
 {
-    //[Authorize(Roles = "Admin")]
     public class BookingsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -57,23 +56,23 @@ namespace GroupProjectWebHotel.Controllers
 
         // GET: Bookings/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var booking = await _context.Booking
-                .Include(b => b.TheCustomer)
-                .Include(b => b.TheRoom)
-                .SingleOrDefaultAsync(m => m.ID == id);
-            if (booking == null)
-            {
-                return NotFound();
-            }
+                var booking = await _context.Booking
+                    .Include(b => b.TheCustomer)
+                    .Include(b => b.TheRoom)
+                    .SingleOrDefaultAsync(m => m.ID == id);
+                if (booking == null)
+                {
+                    return NotFound();
+                }
 
-            return View(booking);
-        }
+                return View(booking);
+            }
 
         // GET: Bookings/Create
         public IActionResult Create()
@@ -97,10 +96,43 @@ namespace GroupProjectWebHotel.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult ManageCreate()
+        {
+            ViewData["CustomerEmail"] = new SelectList(_context.Customer, "Email", "Email");
+            ViewData["RoomID"] = new SelectList(_context.Room, "ID", "ID");
+            ViewData["RoomCost"] = new SelectList(_context.Room, "Cost", "Cost");
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageCreate([Bind("ID,RoomID,CustomerEmail,CheckIn,CheckOut")] Booking booking)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(booking);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(ManageIndex));
+            }
+            ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
+            return View(booking);
+        }
+        //
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ManageIndex()
+        {
+            var applicationDbContext = _context.Booking.Include(b => b.TheCustomer).Include(b => b.TheRoom);
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        [Authorize(Roles = "Admin")]
         // GET: Bookings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -115,7 +147,7 @@ namespace GroupProjectWebHotel.Controllers
                 return NotFound();
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
 
@@ -149,10 +181,10 @@ namespace GroupProjectWebHotel.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(ManageIndex));
             }
             ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "Level", booking.RoomID);
+            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
             return View(booking);
         }
 
@@ -184,7 +216,7 @@ namespace GroupProjectWebHotel.Controllers
             var booking = await _context.Booking.SingleOrDefaultAsync(m => m.ID == id);
             _context.Booking.Remove(booking);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(ManageIndex));
         }
 
         private bool BookingExists(int id)
@@ -205,8 +237,8 @@ namespace GroupProjectWebHotel.Controllers
             ViewBag.CustomerRoomStats = await customerStatsRooms.ToListAsync();
 
             return View(await customerStatsPostcode.ToListAsync());
-        
+
         }
-    }
+}
 
 }
