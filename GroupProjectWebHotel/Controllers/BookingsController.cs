@@ -9,6 +9,7 @@ using GroupProjectWebHotel.Data;
 using GroupProjectWebHotel.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.Data.Sqlite;
 
 namespace GroupProjectWebHotel.Controllers
 {
@@ -73,12 +74,11 @@ namespace GroupProjectWebHotel.Controllers
 
                 return View(booking);
             }
-
         // GET: Bookings/Create
         public IActionResult Create()
         {
-            ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email");
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID");
+            ViewData["CustomerEmail"] = new SelectList(_context.Customer, "Email", "Email");
+            ViewData["RoomID"] = new SelectList(_context.Room, "ID", "ID");
             return View();
         }
 
@@ -87,17 +87,43 @@ namespace GroupProjectWebHotel.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,RoomID,CustomerEmail,CheckIn,CheckOut,Cost")] Booking booking)
+        public async Task<IActionResult> Create(BookRoom bookRoom)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(booking);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CustomerEmail"] = new SelectList(_context.Set<Customer>(), "Email", "Email", booking.CustomerEmail);
-            ViewData["RoomID"] = new SelectList(_context.Set<Room>(), "ID", "ID", booking.RoomID);
-            return View(booking);
+            string _email = User.FindFirst(ClaimTypes.Name).Value;
+
+            //Calculate total days
+            var totalDays = (decimal)(bookRoom.CheckOut - bookRoom.CheckIn).TotalDays;
+
+            //Assigning values
+            var roomID = new SqliteParameter("RoomID", bookRoom.RoomID);
+            var email = new SqliteParameter("CustomerEmail", _email);
+            var checkIn = new SqliteParameter("CheckIn", bookRoom.CheckIn);
+            var checkOut = new SqliteParameter("CheckOut", bookRoom.CheckOut);
+
+            //Select the Room price
+            var selected = _context.Room.FromSql("SELECT * FROM Room WHERE Room.ID = @RoomID", roomID)
+                .Select(ro => new Room { ID = ro.ID, Price = ro.Price });
+            List<Room> selectedRoom = await selected.ToListAsync();
+            var roomPrice = selectedRoom.ElementAt(0).Price;
+
+            //Total days times room price 
+            var calcCost = totalDays * roomPrice;
+
+            //Assign cost to the calculated cost
+            var cost = new SqliteParameter("Cost", calcCost);
+
+            //if (ModelState.IsValid)
+            //{
+
+            ViewBag.RowsAffected = await _context.Database.ExecuteSqlCommandAsync("INSERT INTO Booking (RoomID, CustomerEmail, CheckIn, CheckOut, Cost) " +
+                    "VALUES (@RoomID, @CustomerEmail, @CheckIn, @CheckOut, @Cost)", roomID, email, checkIn, checkOut, cost);
+
+            ViewBag.TotalCost = calcCost;
+            //}
+
+            ViewData["RoomID"] = new SelectList(_context.Room, "ID", "ID", bookRoom.RoomID);
+
+            return View(bookRoom);
         }
 
         [Authorize(Roles = "Admin")]

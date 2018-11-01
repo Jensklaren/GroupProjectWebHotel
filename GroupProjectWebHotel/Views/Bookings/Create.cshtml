@@ -1,4 +1,4 @@
-﻿@model GroupProjectWebHotel.Models.Booking
+﻿@model WebHotel.Models.BookRoom
 
 @{
     ViewData["Title"] = "Create";
@@ -14,11 +14,7 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="RoomID" class="control-label"></label>
-                <select asp-for="RoomID" class="form-control" asp-items="ViewBag.RoomID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerEmail" class="control-label"></label>
-                <select asp-for="CustomerEmail" class="form-control" asp-items="ViewBag.CustomerEmail"></select>
+                <select asp-for="RoomID" class="form-control" asp-items="@ViewBag.RoomID"></select>
             </div>
             <div class="form-group">
                 <label asp-for="CheckIn" class="control-label"></label>
@@ -31,14 +27,64 @@
                 <span asp-validation-for="CheckOut" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Submit" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
 
+@if (Model != null)
+{
+    <div>
+        <h4>Booked Room Successfully!</h4>
+        <h5>RoomID: @Model.RoomID, Check In: @Model.CheckIn, Check Out: @Model.CheckOut, Cost: @ViewBag.TotalCost</h5>
+    </div>
+
+}
+
+
+@*@if (Model != null)
+    {
+    <div>
+        <table class="table">
+            <th>
+                RoomID
+            </th>
+            <th>
+                Level
+            </th>
+            <th>
+                Check-In date
+            </th>
+            <th>
+                Check-In date
+            </th>
+            <th>
+                Cost
+            </th>
+            @foreach (var item in ViewBag.RowsAffected)
+            {
+                <tr>
+                    @item.RoomID
+                </tr>
+                @*<tr>
+                    @item.theRoom.Level
+                </tr>
+                <tr>
+                    @item.CheckIn
+                </tr>
+                <tr>
+                    @item.CheckOut
+                </tr>
+                <tr>
+                    @item.Cost
+                </tr>
+            }
+        </table>
+    </div>
+    }*@
 <div>
-    <a asp-action="ManageIndex">Back to List</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
